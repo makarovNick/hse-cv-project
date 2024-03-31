@@ -1,0 +1,45 @@
+name: Python CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        poetry install
+
+    - name: Lint with Flake8
+      run: |
+        poetry run flake8 .
+
+    - name: Format with Black
+      run: |
+        poetry run black --check .
+
+    - name: Sort imports with isort
+      run: |
+        poetry run isort --check-only .
+
+    - name: Test with pytest
+      run: |
+        poetry run pytest tests/
