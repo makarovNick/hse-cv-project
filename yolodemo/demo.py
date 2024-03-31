@@ -11,6 +11,7 @@ Users can specify the input and output video files via command line arguments.
 import argparse
 import os
 import time
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -19,7 +20,10 @@ import yolodemo.core.utils as utils
 
 TF_CPP_MIN_LOG_LEVEL = "3"
 TF_LOGGING_VERBOSITY = tf.compat.v1.logging.ERROR
-MODEL_PATH = "./yolov3_nano_416.pb"
+script_dir = Path(__file__).parent
+print(script_dir.resolve())
+# Define the model path relative to the script directory
+MODEL_PATH = str(script_dir / "assets" / "yolov3_nano_416.pb")
 NUM_CLASSES = 20
 INPUT_SIZE = 416
 CODEC = "mp4v"
@@ -113,6 +117,78 @@ def process_frame(frame, session, return_tensors):
 
     processed_frame_bgr = cv2.cvtColor(processed_frame, cv2.COLOR_RGB2BGR)
     return processed_frame_bgr, time.time() - start_time
+
+
+def run_detection_single_image(image_path):
+    """
+    Run object detection on a single image and display the result.
+
+    Args:
+    - image_path (str): Path to the image file.
+    """
+    # Ensure the model assets are available
+    download_assets_if_needed(MODEL_PATH)
+
+    # Load the TensorFlow graph
+    graph = tf.Graph()
+    with graph.as_default():
+        return_tensors = utils.read_pb_return_tensors(
+            graph,
+            MODEL_PATH,
+            ["input/input_data:0", "pred_sbbox/concat_2:0", "pred_lbbox/concat_2:0"],
+        )
+
+    # Start a TensorFlow session for inference
+    with tf.compat.v1.Session(graph=graph) as sess:
+        # Load the image
+        image = cv2.imread(image_path)
+        if image is None:
+            raise ValueError(f"Image not found at {image_path}")
+
+        # Process the image for YOLOv3 (resize, normalize, etc.)
+        frame_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image_data = utils.image_preporcess(
+            np.copy(frame_rgb), [INPUT_SIZE, INPUT_SIZE]
+        )
+        image_data = image_data[np.newaxis, ...]  # Add batch dimension
+
+        # Run detection
+        pred_sbbox, pred_lbbox = sess.run(
+            [return_tensors[1], return_tensors[2]],
+            feed_dict={return_tensors[0]: image_data},
+        )
+        pred_bbox = np.concatenate(
+            [
+                np.reshape(pred_sbbox, (-1, 5 + NUM_CLASSES)),
+                np.reshape(pred_lbbox, (-1, 5 + NUM_CLASSES)),
+            ],
+            axis=0,
+        )
+
+        # Post-process the detections (non-max suppression, etc.)
+        bboxes = utils.postprocess_boxes(pred_bbox, image.shape[:2], INPUT_SIZE, 0.3)
+        bboxes = utils.nms(bboxes, 0.45, method="nms")
+
+    return bboxes
+
+
+def extract_frame_from_video(video_path, frame_path, frame_number=0):
+    """
+    Extracts a frame from a given video file.
+
+    Args:
+    - video_path (str): Path to the video file.
+    - frame_path (str): Path where the extracted frame will be saved.
+    - frame_number (int): The number of the frame to extract.
+    """
+    vidcap = cv2.VideoCapture(video_path)
+    vidcap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
+    success, image = vidcap.read()
+    if success:
+        cv2.imwrite(frame_path, image)
+    else:
+        raise Exception("Failed to extract frame from video.")
+    vidcap.release()
 
 
 def main():
