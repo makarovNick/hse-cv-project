@@ -28,3 +28,4 @@ yolov3 = 'yolodemo.demo:main'
 isort = "4.3.21"
 black = "18.3a4"
 flake8 = "3.9.2"
+pytest = "7.0.1"
