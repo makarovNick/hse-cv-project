@@ -12,7 +12,6 @@
 # ================================================================
 
 import core.common as common
-import core.dataset as dataset
 import tensorflow as tf
 
 

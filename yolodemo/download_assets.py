@@ -1,4 +1,3 @@
-import os
 import shutil
 import tarfile
 from pathlib import Path
@@ -8,7 +7,6 @@ import requests
 
 # Get the directory of the current script to construct relative paths
 script_dir = Path(__file__).parent
-print((script_dir / "assets").resolve())
 
 
 def download_and_extract(url, relative_output_path):

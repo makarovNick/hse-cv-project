@@ -1,0 +1,16 @@
+FROM python:3.6-slim
+
+ARG PORT=8501
+EXPOSE $PORT
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    cmake \
+    ninja-build \
+    libc-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY . .
+RUN pip3 install -U --no-cache-dir pip -r docker_requirements.txt && pip3 install -e .
+CMD ["streamlit run app.py --server.port $PORT --server.fileWatcherType none"]
