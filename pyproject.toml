@@ -10,8 +10,8 @@ python = "^3.6"
 tensorflow = "2.2.0"
 gdown = "4.7.3"
 Pillow = "8.4.0"
-opencv-contrib-python = "4.9.0.80"
-opencv-python = "4.9.0.80"
+opencv-contrib-python = "4.5.1.48"
+opencv-python = "4.5.1.48"
 easydict = "1.13"
 
 [build-system]
@@ -25,6 +25,6 @@ include = "yolodemo"
 yolov3 = 'yolodemo.demo:main'
 
 [tool.poetry.dev-dependencies]
-isort = "5.10.1"
-black = "22.8.0"
-flake8 = "5.0.4"
+isort = "4.3.21"
+black = "18.3a4"
+flake8 = "3.9.2"

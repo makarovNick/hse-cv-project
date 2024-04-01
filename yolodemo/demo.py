@@ -67,8 +67,11 @@ def setup_video_writer(
 def process_video(video_path, output_path, graph, return_tensors):
     """Processes the video and displays the result."""
     try:
-        cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
-        display_enabled = True
+        if os.environ.get("DISPLAY"):
+            cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
+            display_enabled = True
+        else:
+            display_enabled = False
     except cv2.error:
         print("Display not supported. Output will not be shown.")
         display_enabled = False
