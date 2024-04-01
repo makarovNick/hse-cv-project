@@ -172,6 +172,16 @@ def run_detection_single_image(image_path):
     return bboxes
 
 
+def get_labeled_image(image_path):
+    bboxes = run_detection_single_image(image_path)
+    image = cv2.imread(image_path)
+    if image is None:
+        raise ValueError(f"Image not found at {image_path}")
+    processed_frame = utils.draw_bbox(image, bboxes)
+
+    return processed_frame
+
+
 def extract_frame_from_video(video_path, frame_path, frame_number=0):
     """
     Extracts a frame from a given video file.
