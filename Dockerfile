@@ -17,6 +17,6 @@ RUN pip3 install -U --no-cache-dir pip -r docker_requirements.txt && pip3 instal
 
 RUN pip install poetry
 
-EXPOSE PORT
+EXPOSE $PORT
 
 CMD ["streamlit run app.py --server.port $PORT"]
