@@ -8,38 +8,41 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
 
-    - name: Install Poetry
-      run: |
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    - name: Install dependencies
-      run: |
-        poetry install
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.create false
 
-    - name: Lint with Flake8
-      run: |
-        poetry run flake8 .
+      - name: Install dependencies
+        run: |
+          poetry install
 
-    - name: Format with Black
-      run: |
-        poetry run black --check .
+      - name: Lint with Flake8
+        run: |
+          poetry run flake8 .
 
-    - name: Sort imports with isort
-      run: |
-        poetry run isort --check-only .
+      - name: Format with Black
+        run: |
+          poetry run black --check .
 
-    - name: Test with pytest
-      run: |
-        poetry run pytest tests/
+      - name: Sort imports with isort
+        run: |
+          poetry run isort --check-only .
+
+      - name: Test with pytest
+        run: |
+          poetry run pytest tests/

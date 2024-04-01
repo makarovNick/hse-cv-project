@@ -12,6 +12,7 @@ gdown = "4.7.3"
 Pillow = "8.4.0"
 opencv-contrib-python = "4.9.0.80"
 opencv-python = "4.9.0.80"
+easydict = "1.13"
 
 [build-system]
 requires = ["poetry-core"]
@@ -22,3 +23,8 @@ include = "yolodemo"
 
 [tool.poetry.scripts]
 yolov3 = 'yolodemo.demo:main'
+
+[tool.poetry.dev-dependencies]
+isort = "5.10.1"
+black = "22.8.0"
+flake8 = "5.0.4"
