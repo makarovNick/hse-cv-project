@@ -11,8 +11,6 @@
 #
 # ================================================================
 
-import math
-
 import tensorflow as tf
 
 slim = tf.contrib.slim
@@ -65,7 +63,7 @@ def convolutional(
             )
             conv = tf.nn.bias_add(conv, bias)
 
-        if activate == True:
+        if activate:
             conv = tf.nn.leaky_relu(conv, alpha=0.1)
 
     return conv
@@ -129,7 +127,6 @@ def upsample(input_data, name, method="deconv"):
     return output
 
 
-############yolo_nano################
 def DW_convolutional(
     input_data, filters_shape, trainable, name, downsample=False, activate=True, bn=True
 ):
@@ -178,7 +175,7 @@ def DW_convolutional(
             )
             conv = tf.nn.bias_add(conv, bias)
 
-        if activate == True:
+        if activate:
             conv = tf.nn.leaky_relu(conv, alpha=0.1)
 
     return conv
@@ -227,7 +224,7 @@ def _avgpool_fixed_padding(inputs, kernel_size, strides=1):
 
 def AdaptiveAvgPool2d(input_data, output_size):
     h = input_data.get_shape().as_list()[1]
-    if h == None:
+    if h is None:
         h = 1
     # print(h)
     # h=52
@@ -333,7 +330,7 @@ def PEP(
 def fcn_layer(input_data, input_dims, output_dims, activation=None):
     W = tf.Variable(tf.truncated_normal([input_dims, output_dims], stddev=0.1))
     input_data = tf.matmul(input_data, W)
-    if activation == None:
+    if activation is None:
         return input_data
     else:
         input_data = activation(input_data)
@@ -344,7 +341,7 @@ def FCA_A(input_data, channels, reduction_ratio):
     x = input_data
     b, h, w, c = input_data.shape
     # print(type(b))
-    if b == None:
+    if b is None:
         b = 1
         h = 0
         w = 0

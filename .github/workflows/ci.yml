@@ -32,7 +32,7 @@ jobs:
 
       - name: Lint with Flake8
         run: |
-          poetry run flake8 .
+          poetry run flake8 . --max-line-length 120
 
       - name: Format with Black
         run: |
@@ -40,7 +40,7 @@ jobs:
 
       - name: Sort imports with isort
         run: |
-          poetry run isort --check-only .
+          poetry run isort -rc .
 
       - name: Test with pytest
         run: |

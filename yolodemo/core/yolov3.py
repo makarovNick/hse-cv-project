@@ -37,7 +37,7 @@ class YOLOV3(object):
             self.conv_lbbox, self.conv_mbbox, self.conv_sbbox = self.__build_nework(
                 input_data
             )
-        except:
+        except Exception:
             raise NotImplementedError("Can not build up yolov3 network!")
 
         with tf.variable_scope("pred_sbbox"):
